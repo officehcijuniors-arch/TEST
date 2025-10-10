@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>U13 Tabelle Test</title>
+</head>
+<body>
+  <div id="table-container"></div>
+
+  <script type="module">
+    import { Widget } from "https://cdn.prod.website-files.com/65ce0995c4a7c7f85f6c9275/hockeydata.util.Widget.js";
+
+    new Widget({
+      $domNode: document.querySelector("#table-container"),
+      widgetName: "hockeydata.los.Standings",
+      apiKey: "738aba5a0c15ea7da496e1cda6922ff1",
+      divisionId: "oehv-u13-gd",
+      sport: "icehockey",
+      columnSet: "long"
+    });
+  </script>
+</body>
+</html>
