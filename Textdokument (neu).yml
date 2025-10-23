@@ -1,0 +1,33 @@
+name: Update U13-Tabelle
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Montag 10:00 MEZ → 9:00 UTC
+  workflow_dispatch: # manuell auslösen
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repo auschecken
+        uses: actions/checkout@v3
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Abhängigkeiten installieren
+        run: npm install node-fetch@2
+
+      - name: Tabelle aktualisieren
+        run: node update_tabelle.js
+
+      - name: Commit und Push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git add tabelle.json
+          git commit -m "Automatisches Update der U13-Tabelle"
+          git push
