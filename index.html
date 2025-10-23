@@ -22,13 +22,6 @@
     margin-bottom: 1.2rem;
   }
 
-  #status {
-    text-align: center;
-    color: #555;
-    margin-bottom: 1.5rem;
-    font-style: italic;
-  }
-
   /* ===== Tabellen-Layout ===== */
   table {
     width: 100%;
@@ -110,7 +103,6 @@
 <body>
 
 <h1>U13-Tabelle – HC Innsbruck</h1>
-<div id="status">Letzte Aktualisierung: gerade</div>
 
 <table>
   <thead>
@@ -204,10 +196,6 @@ async function renderTabelle() {
     `;
     tbody.insertAdjacentHTML("beforeend", row);
   });
-
-  document.getElementById("status").textContent =
-    "Letzte Aktualisierung: " + jetzt.toLocaleTimeString("de-DE") +
-    (istAutoUpdateZeit ? " (Automatisches Update aktiv)" : "");
 }
 
 // Initialisierung
