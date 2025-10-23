@@ -2,23 +2,116 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>U13-Tabelle – HC Innsbruck</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 2rem; color: #222; }
-  h1 { margin-bottom: 1rem; }
-  #status { margin-bottom: 1rem; font-style: italic; }
-  table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: center; }
-  th { background: #e0e0e0; }
-  tbody tr:nth-child(even) { background: #f9f9f9; }
-  .punkte { font-weight: bold; }
-  .positive { color: green; }
-  .negative { color: red; }
+  /* ===== Grunddesign ===== */
+  body {
+    font-family: "Inter", Arial, sans-serif;
+    background: #f7f8fa;
+    margin: 0;
+    padding: 2rem;
+    color: #222;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    color: #1a1a1a;
+    margin-bottom: 1.2rem;
+  }
+
+  #status {
+    text-align: center;
+    color: #555;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  /* ===== Tabellen-Layout ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  }
+
+  thead {
+    background: #eaeaea;
+  }
+
+  th {
+    font-weight: 600;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+  }
+
+  td {
+    padding: 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fafafa;
+  }
+
+  tbody tr:hover {
+    background: #f0f3f8;
+    transition: background 0.3s ease;
+  }
+
+  .punkte {
+    font-weight: 700;
+    color: #111;
+  }
+
+  /* ===== Responsive Design ===== */
+  @media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+    thead {
+      display: none;
+    }
+    tr {
+      background: #fff;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      overflow: hidden;
+      padding: 0.5rem;
+    }
+    td {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    td:last-child {
+      border-bottom: none;
+    }
+    td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #444;
+    }
+  }
 </style>
 </head>
 <body>
+
 <h1>U13-Tabelle – HC Innsbruck</h1>
 <div id="status">Letzte Aktualisierung: gerade</div>
+
 <table>
   <thead>
     <tr>
@@ -34,38 +127,35 @@
       <th>Gegentore</th>
       <th>Tordifferenz</th>
       <th>Punkte</th>
-      <th>Bonuspunkte</th>
     </tr>
   </thead>
   <tbody id="tabelle"></tbody>
 </table>
 
 <script>
-// Manuelle Kontrolle: true = immer API laden, false = nur automatisch montags 10 Uhr
+// Konfiguration
 const manualUpdate = false;
 
-// Letzte gespeicherte Tabelle (Backup-Daten)
+// Backup-Daten
 let jsonData = {
-  "statusId":1,
-  "statusMsg":"Ok",
-  "data":{
-    "rows":[
-      {"tableRank":1,"teamLongname":"EC KAC","gamesPlayed":8,"gamesWon":8,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":0,"goalsFor":67,"goalsAgainst":17,"goalDifference":"+50","points":24,"bonusPoints":0},
-      {"tableRank":2,"teamLongname":"\"Rockit-Apfel\" Graz99 Juniors","gamesPlayed":9,"gamesWon":8,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":1,"goalsFor":58,"goalsAgainst":20,"goalDifference":"+38","points":24,"bonusPoints":0},
-      {"tableRank":3,"teamLongname":"EK Zeller Eisbären","gamesPlayed":9,"gamesWon":6,"gamesWonInOt":1,"gamesTied":0,"gamesLostInOt":0,"gamesLost":2,"goalsFor":67,"goalsAgainst":40,"goalDifference":"+27","points":20,"bonusPoints":0},
-      {"tableRank":4,"teamLongname":"Steel Wings Linz","gamesPlayed":8,"gamesWon":5,"gamesWonInOt":1,"gamesTied":0,"gamesLostInOt":0,"gamesLost":2,"goalsFor":67,"goalsAgainst":21,"goalDifference":"+46","points":17,"bonusPoints":0},
-      {"tableRank":5,"teamLongname":"EC Red Bull Salzburg","gamesPlayed":9,"gamesWon":5,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":1,"gamesLost":3,"goalsFor":62,"goalsAgainst":45,"goalDifference":"+17","points":16,"bonusPoints":0},
-      {"tableRank":6,"teamLongname":"HC TIWAG Innsbruck - Die Haie","gamesPlayed":10,"gamesWon":4,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":1,"gamesLost":5,"goalsFor":55,"goalsAgainst":40,"goalDifference":"+15","points":13,"bonusPoints":0},
-      {"tableRank":7,"teamLongname":"EC iDM VSV","gamesPlayed":9,"gamesWon":4,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":5,"goalsFor":56,"goalsAgainst":51,"goalDifference":"+5","points":12,"bonusPoints":0},
-      {"tableRank":8,"teamLongname":"EC Lower Austria Stars","gamesPlayed":8,"gamesWon":3,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":5,"goalsFor":55,"goalsAgainst":39,"goalDifference":"+16","points":9,"bonusPoints":0},
-      {"tableRank":9,"teamLongname":"EAC Junior Capitals","gamesPlayed":9,"gamesWon":2,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":7,"goalsFor":43,"goalsAgainst":53,"goalDifference":"-10","points":6,"bonusPoints":0},
-      {"tableRank":10,"teamLongname":"KSV Eishockey - Juniors / Graz99 Juniors","gamesPlayed":8,"gamesWon":1,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":7,"goalsFor":22,"goalsAgainst":60,"goalDifference":"-38","points":3,"bonusPoints":0},
-      {"tableRank":11,"teamLongname":"EV Zeltweg - Murtal Lions","gamesPlayed":9,"gamesWon":0,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":9,"goalsFor":8,"goalsAgainst":174,"goalDifference":"-166","points":0,"bonusPoints":0}
+  "data": {
+    "rows": [
+      {"tableRank":1,"teamLongname":"EC KAC","gamesPlayed":8,"gamesWon":8,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":0,"goalsFor":67,"goalsAgainst":17,"goalDifference":"+50","points":24},
+      {"tableRank":2,"teamLongname":"\"Rockit-Apfel\" Graz99 Juniors","gamesPlayed":9,"gamesWon":8,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":1,"goalsFor":58,"goalsAgainst":20,"goalDifference":"+38","points":24},
+      {"tableRank":3,"teamLongname":"EK Zeller Eisbären","gamesPlayed":9,"gamesWon":6,"gamesWonInOt":1,"gamesTied":0,"gamesLostInOt":0,"gamesLost":2,"goalsFor":67,"goalsAgainst":40,"goalDifference":"+27","points":20},
+      {"tableRank":4,"teamLongname":"Steel Wings Linz","gamesPlayed":8,"gamesWon":5,"gamesWonInOt":1,"gamesTied":0,"gamesLostInOt":0,"gamesLost":2,"goalsFor":67,"goalsAgainst":21,"goalDifference":"+46","points":17},
+      {"tableRank":5,"teamLongname":"EC Red Bull Salzburg","gamesPlayed":9,"gamesWon":5,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":1,"gamesLost":3,"goalsFor":62,"goalsAgainst":45,"goalDifference":"+17","points":16},
+      {"tableRank":6,"teamLongname":"HC TIWAG Innsbruck - Die Haie","gamesPlayed":10,"gamesWon":4,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":1,"gamesLost":5,"goalsFor":55,"goalsAgainst":40,"goalDifference":"+15","points":13},
+      {"tableRank":7,"teamLongname":"EC iDM VSV","gamesPlayed":9,"gamesWon":4,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":5,"goalsFor":56,"goalsAgainst":51,"goalDifference":"+5","points":12},
+      {"tableRank":8,"teamLongname":"EC Lower Austria Stars","gamesPlayed":8,"gamesWon":3,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":5,"goalsFor":55,"goalsAgainst":39,"goalDifference":"+16","points":9},
+      {"tableRank":9,"teamLongname":"EAC Junior Capitals","gamesPlayed":9,"gamesWon":2,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":7,"goalsFor":43,"goalsAgainst":53,"goalDifference":"-10","points":6},
+      {"tableRank":10,"teamLongname":"KSV Eishockey - Juniors / Graz99 Juniors","gamesPlayed":8,"gamesWon":1,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":7,"goalsFor":22,"goalsAgainst":60,"goalDifference":"-38","points":3},
+      {"tableRank":11,"teamLongname":"EV Zeltweg - Murtal Lions","gamesPlayed":9,"gamesWon":0,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":9,"goalsFor":8,"goalsAgainst":174,"goalDifference":"-166","points":0}
     ]
   }
 };
 
-// Funktion: aktuelle Daten von API abrufen
+// API-Abruf
 async function fetchAktuelleDaten() {
   try {
     const url = "https://api.hockeydata.net/data/ebel/Standings?callback=?&apiKey=738aba5a0c15ea7da496e1cda6922ff1&lang=en&referer=www.hcinnsbruck.at&divisionId=oehv-u13-gd";
@@ -74,20 +164,18 @@ async function fetchAktuelleDaten() {
     const match = text.match(/\((.*)\)/s);
     if (!match) throw new Error("Keine JSON gefunden");
     jsonData = JSON.parse(match[1]);
-    console.log("✅ API-Daten erfolgreich geladen");
+    console.log("✅ API-Daten geladen");
   } catch (err) {
     console.error("❌ Fehler beim Laden der API:", err);
   }
 }
 
-// Funktion: Tabelle aufbauen
+// Tabelle aufbauen
 async function renderTabelle() {
   const jetzt = new Date();
-  const tag = jetzt.getDay();   // Montag = 1
+  const tag = jetzt.getDay();
   const stunde = jetzt.getHours();
   const minute = jetzt.getMinutes();
-
-  // Automatisches API-Update: Montag zwischen 10:00 und 10:01
   const istAutoUpdateZeit = (tag === 1 && stunde === 10 && minute === 0);
 
   if (manualUpdate || istAutoUpdateZeit) {
@@ -98,24 +186,23 @@ async function renderTabelle() {
   tbody.innerHTML = "";
 
   jsonData.data.rows.forEach(team => {
-    const diffClass = team.goalDifference.startsWith('-') ? 'negative' : 'positive';
-    tbody.insertAdjacentHTML("beforeend", `
+    const row = `
       <tr>
-        <td>${team.tableRank}</td>
-        <td>${team.teamLongname}</td>
-        <td>${team.gamesPlayed}</td>
-        <td>${team.gamesWon}</td>
-        <td>${team.gamesWonInOt}</td>
-        <td>${team.gamesTied}</td>
-        <td>${team.gamesLostInOt}</td>
-        <td>${team.gamesLost}</td>
-        <td>${team.goalsFor}</td>
-        <td>${team.goalsAgainst}</td>
-        <td class="${diffClass}">${team.goalDifference}</td>
-        <td class="punkte">${team.points}</td>
-        <td>${team.bonusPoints}</td>
+        <td data-label="Rang">${team.tableRank}</td>
+        <td data-label="Team">${team.teamLongname}</td>
+        <td data-label="Spiele">${team.gamesPlayed}</td>
+        <td data-label="Siege">${team.gamesWon}</td>
+        <td data-label="Siege OT">${team.gamesWonInOt}</td>
+        <td data-label="Unentschieden">${team.gamesTied}</td>
+        <td data-label="Niederlagen OT">${team.gamesLostInOt}</td>
+        <td data-label="Niederlagen">${team.gamesLost}</td>
+        <td data-label="Tore">${team.goalsFor}</td>
+        <td data-label="Gegentore">${team.goalsAgainst}</td>
+        <td data-label="Tordifferenz">${team.goalDifference}</td>
+        <td data-label="Punkte" class="punkte">${team.points}</td>
       </tr>
-    `);
+    `;
+    tbody.insertAdjacentHTML("beforeend", row);
   });
 
   document.getElementById("status").textContent =
@@ -123,9 +210,10 @@ async function renderTabelle() {
     (istAutoUpdateZeit ? " (Automatisches Update aktiv)" : "");
 }
 
-// Initial rendern + jede Minute aktualisieren
+// Initialisierung
 renderTabelle();
 setInterval(renderTabelle, 60000);
 </script>
+
 </body>
 </html>
