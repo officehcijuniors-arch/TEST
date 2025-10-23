@@ -2,22 +2,76 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>U13 Tabelle Test</title>
+<title>U13-Tabelle – HC Innsbruck</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 2rem; }
+  table { border-collapse: collapse; width: 100%; background: white; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  th { background: #e0e0e0; }
+  tbody tr:nth-child(even) { background: #f9f9f9; }
+  .punkte { font-weight: bold; }
+</style>
 </head>
 <body>
-  <div id="table-container"></div>
+<h1>U13-Tabelle – HC Innsbruck</h1>
+<div id="status">Lade Daten …</div>
+<table>
+  <thead>
+    <tr>
+      <th>Rang</th>
+      <th>Team</th>
+      <th>Spiele</th>
+      <th>Siege</th>
+      <th>Siege OT</th>
+      <th>Unentschieden</th>
+      <th>Niederlagen OT</th>
+      <th>Niederlagen</th>
+      <th>Tore</th>
+      <th>Gegentore</th>
+      <th>Tordifferenz</th>
+      <th>Punkte</th>
+      <th>Bonuspunkte</th>
+    </tr>
+  </thead>
+  <tbody id="tabelle"></tbody>
+</table>
 
-  <script type="module">
-    import { Widget } from "https://cdn.prod.website-files.com/65ce0995c4a7c7f85f6c9275/hockeydata.util.Widget.js";
+<script>
+async function ladeTabelle() {
+  try {
+    const res = await fetch('tabelle.json');
+    const data = await res.json();
+    const tbody = document.getElementById('tabelle');
+    tbody.innerHTML = '';
 
-    new Widget({
-      $domNode: document.querySelector("#table-container"),
-      widgetName: "hockeydata.los.Standings",
-      apiKey: "738aba5a0c15ea7da496e1cda6922ff1",
-      divisionId: "oehv-u13-gd",
-      sport: "icehockey",
-      columnSet: "long"
+    data.data.rows.forEach(team => {
+      tbody.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td>${team.tableRank}</td>
+          <td>${team.teamLongname}</td>
+          <td>${team.gamesPlayed}</td>
+          <td>${team.gamesWon}</td>
+          <td>${team.gamesWonInOt}</td>
+          <td>${team.gamesTied}</td>
+          <td>${team.gamesLostInOt}</td>
+          <td>${team.gamesLost}</td>
+          <td>${team.goalsFor}</td>
+          <td>${team.goalsAgainst}</td>
+          <td class="punkte">${team.goalDifference}</td>
+          <td class="punkte">${team.points}</td>
+          <td>${team.bonusPoints}</td>
+        </tr>
+      `);
     });
-  </script>
+
+    document.getElementById('status').textContent = "Letzte Aktualisierung: " + new Date().toLocaleString("de-DE");
+  } catch (err) {
+    document.getElementById('status').textContent = "Fehler beim Laden der Tabelle.";
+    console.error(err);
+  }
+}
+
+ladeTabelle();
+</script>
 </body>
 </html>
