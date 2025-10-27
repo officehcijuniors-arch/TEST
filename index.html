@@ -3,106 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>U13-Tabelle – HC Innsbruck</title>
+<title>U15-Tabelle – HC Innsbruck</title>
 <style>
-  /* ===== Grunddesign ===== */
-  body {
-    font-family: "Inter", Arial, sans-serif;
-    background: #f7f8fa;
-    margin: 0;
-    padding: 2rem;
-    color: #222;
-  }
+body {
+  font-family:"Inter",Arial,sans-serif;
+  background:#f7f8fa;
+  margin:0;
+  padding:2rem;
+  color:#222;
+}
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:1rem;
+}
+h1 {
+  font-size:2rem;
+  font-weight:700;
+  margin:0;
+  color:#0047AB;
+}
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    color: #1a1a1a;
-    margin-bottom: 1.2rem;
-  }
+/* Logo oben rechts */
+#logo {
+  height:55px;
+  opacity:0.8;
+  display:block;
+}
 
-  /* ===== Tabellen-Layout ===== */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  }
+/* Tabelle größer & Spalten enger */
+table {
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 12px 35px rgba(0,0,0,0.18);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size:1rem; /* größer */
+}
+table:hover {
+  transform: translateY(-6px);
+  box-shadow:0 25px 50px rgba(0,0,0,0.25);
+}
 
-  thead {
-    background: #eaeaea;
-  }
+thead {
+  background:#eaeaea;
+}
+th {
+  font-weight:600;
+  padding:10px 6px;
+  text-align:center;
+  color:#333;
+  border-bottom:2px solid #ddd;
+}
+td {
+  padding:8px 6px;
+  text-align:center;
+  border-bottom:1px solid #eee;
+}
+tbody tr:nth-child(even){
+  background:#fafafa;
+}
+tbody tr:hover{
+  background:#f0f3f8;
+  transition: background 0.3s ease;
+}
+.punkte {
+  font-weight:700;
+}
+.team-rot {
+  color:#E10600;
+  font-weight:700;
+}
 
-  th {
-    font-weight: 600;
-    padding: 12px 10px;
-    text-align: center;
-    font-size: 0.95rem;
-    color: #333;
-    border-bottom: 2px solid #ddd;
-  }
+#letzteAktualisierung {
+  font-size:0.8rem;
+  color:#555;
+  text-align:right;
+  margin-top:0.5rem;
+}
 
-  td {
-    padding: 10px;
-    text-align: center;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #eee;
+/* Responsive Design */
+@media (max-width:768px){
+  table,thead,tbody,th,td,tr{display:block;}
+  thead{display:none;}
+  tr{
+    background:#fff;
+    margin-bottom:1rem;
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    overflow:hidden;
+    padding:0.5rem;
   }
-
-  tbody tr:nth-child(even) {
-    background: #fafafa;
+  td{
+    display:flex;
+    justify-content:space-between;
+    padding:6px 8px;
+    border:none;
+    border-bottom:1px solid #f0f0f0;
   }
-
-  tbody tr:hover {
-    background: #f0f3f8;
-    transition: background 0.3s ease;
-  }
-
-  .punkte {
-    font-weight: 700;
-    color: #111;
-  }
-
-  /* ===== Responsive Design ===== */
-  @media (max-width: 768px) {
-    table, thead, tbody, th, td, tr {
-      display: block;
-    }
-    thead {
-      display: none;
-    }
-    tr {
-      background: #fff;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      overflow: hidden;
-      padding: 0.5rem;
-    }
-    td {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 10px;
-      border: none;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    td:last-child {
-      border-bottom: none;
-    }
-    td::before {
-      content: attr(data-label);
-      font-weight: 600;
-      color: #444;
-    }
-  }
+  td:last-child{border-bottom:none;}
+  td::before{content:attr(data-label); font-weight:600; color:#444;}
+}
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-<h1>U13-Tabelle – HC Innsbruck</h1>
+<header>
+  <h1>U15-Tabelle – HC Innsbruck</h1>
+  <img id="logo" src="HAI.webp" alt="HC Innsbruck Logo">
+</header>
 
 <table>
   <thead>
@@ -124,12 +138,12 @@
   <tbody id="tabelle"></tbody>
 </table>
 
+<p id="letzteAktualisierung"></p>
+
 <script>
-// Konfiguration
 const manualUpdate = true;
 
-// Backup-Daten
-let jsonData = {
+const backupData = {
   "data": {
     "rows": [
       {"tableRank":1,"teamLongname":"EC KAC","gamesPlayed":8,"gamesWon":8,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":0,"goalsFor":67,"goalsAgainst":17,"goalDifference":"+50","points":24},
@@ -147,41 +161,16 @@ let jsonData = {
   }
 };
 
-// API-Abruf
-async function fetchAktuelleDaten() {
-  try {
-    const url = "https://api.hockeydata.net/data/ebel/Standings?callback=?&apiKey=738aba5a0c15ea7da496e1cda6922ff1&lang=en&referer=www.hcinnsbruck.at&divisionId=oehv-u13-gd";
-    const res = await fetch(url);
-    const text = await res.text();
-    const match = text.match(/\((.*)\)/s);
-    if (!match) throw new Error("Keine JSON gefunden");
-    jsonData = JSON.parse(match[1]);
-    console.log("✅ API-Daten geladen");
-  } catch (err) {
-    console.error("❌ Fehler beim Laden der API:", err);
-  }
-}
+function renderTabelle(data) {
+  const tbody = $("#tabelle");
+  tbody.empty();
 
-// Tabelle aufbauen
-async function renderTabelle() {
-  const jetzt = new Date();
-  const tag = jetzt.getDay();
-  const stunde = jetzt.getHours();
-  const minute = jetzt.getMinutes();
-  const istAutoUpdateZeit = (tag === 1 && stunde === 10 && minute === 0);
-
-  if (manualUpdate || istAutoUpdateZeit) {
-    await fetchAktuelleDaten();
-  }
-
-  const tbody = document.getElementById("tabelle");
-  tbody.innerHTML = "";
-
-  jsonData.data.rows.forEach(team => {
-    const row = `
+  data.data.rows.forEach(team => {
+    const teamKlasse = team.teamLongname === "HC TIWAG Innsbruck - Die Haie" ? "team-rot" : "";
+    tbody.append(`
       <tr>
         <td data-label="Rang">${team.tableRank}</td>
-        <td data-label="Team">${team.teamLongname}</td>
+        <td data-label="Team" class="${teamKlasse}">${team.teamLongname}</td>
         <td data-label="Spiele">${team.gamesPlayed}</td>
         <td data-label="Siege">${team.gamesWon}</td>
         <td data-label="Siege OT">${team.gamesWonInOt}</td>
@@ -193,16 +182,31 @@ async function renderTabelle() {
         <td data-label="Tordifferenz">${team.goalDifference}</td>
         <td data-label="Punkte" class="punkte">${team.points}</td>
       </tr>
-    `;
-    tbody.insertAdjacentHTML("beforeend", row);
+    `);
+  });
+
+  updateZeitstempel();
+}
+
+function updateZeitstempel() {
+  const jetzt = new Date();
+  $("#letzteAktualisierung").text(`Letzte Aktualisierung: ${jetzt.toLocaleDateString()} ${jetzt.toLocaleTimeString()}`);
+}
+
+function fetchDaten() {
+  const url = "https://api.hockeydata.net/data/ebel/Standings?apiKey=738aba5a0c15ea7da496e1cda6922ff1&lang=en&referer=www.hcinnsbruck.at&divisionId=oehv-u15-gd&callback=?";
+  $.getJSON(url, function(data){
+    renderTabelle(data);
+  }).fail(function(){
+    renderTabelle(backupData);
   });
 }
 
-// Initialisierung
-renderTabelle();
-setInterval(renderTabelle, 60000);
+// Init
+renderTabelle(backupData);
+if(manualUpdate) setInterval(fetchDaten,60000);
+fetchDaten();
 </script>
 
 </body>
 </html>
-
