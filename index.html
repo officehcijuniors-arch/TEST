@@ -1,212 +1,207 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>U15-Tabelle – HC Innsbruck</title>
+<meta charset="utf-8">
+<title>HC TIWAG Innsbruck Eisplan 2025/26</title>
 <style>
-body {
-  font-family:"Inter",Arial,sans-serif;
-  background:#f7f8fa;
-  margin:0;
-  padding:2rem;
-  color:#222;
-}
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:1rem;
-}
-h1 {
-  font-size:2rem;
-  font-weight:700;
-  margin:0;
-  color:#0047AB;
-}
-
-/* Logo oben rechts */
-#logo {
-  height:55px;
-  opacity:0.8;
-  display:block;
-}
-
-/* Tabelle größer & Spalten enger */
-table {
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 12px 35px rgba(0,0,0,0.18);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  font-size:1rem; /* größer */
-}
-table:hover {
-  transform: translateY(-6px);
-  box-shadow:0 25px 50px rgba(0,0,0,0.25);
-}
-
-thead {
-  background:#eaeaea;
-}
-th {
-  font-weight:600;
-  padding:10px 6px;
-  text-align:center;
-  color:#333;
-  border-bottom:2px solid #ddd;
-}
-td {
-  padding:8px 6px;
-  text-align:center;
-  border-bottom:1px solid #eee;
-}
-tbody tr:nth-child(even){
-  background:#fafafa;
-}
-tbody tr:hover{
-  background:#f0f3f8;
-  transition: background 0.3s ease;
-}
-.punkte {
-  font-weight:700;
-}
-.team-rot {
-  color:#E10600;
-  font-weight:700;
-}
-
-#letzteAktualisierung {
-  font-size:0.8rem;
-  color:#555;
-  text-align:right;
-  margin-top:0.5rem;
-}
-
-/* Responsive Design */
-@media (max-width:768px){
-  table,thead,tbody,th,td,tr{display:block;}
-  thead{display:none;}
-  tr{
-    background:#fff;
-    margin-bottom:1rem;
-    border-radius:8px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.05);
-    overflow:hidden;
-    padding:0.5rem;
+  body {
+    margin: 0;
+    font-family: "Areno Serif", serif;
+    background: linear-gradient(135deg, #003789 40%, #d42323 60%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    color: #fff;
+    overflow-x: hidden;
   }
-  td{
-    display:flex;
-    justify-content:space-between;
-    padding:6px 8px;
-    border:none;
-    border-bottom:1px solid #f0f0f0;
+
+  .logo-container { display: flex; justify-content: center; align-items: flex-end; gap: 60px; margin: 20px 0 10px; }
+  .logo-container img { opacity: 0; transform: translateY(-20px); transition: transform 1s ease, opacity 1s ease; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); }
+  .logo-container.loaded img { opacity: 1; transform: translateY(0); }
+  .logo-container img:first-child { max-height: 100px; transform: translateX(-10%) translateY(-20px); }
+  .logo-container.loaded img:first-child { transform: translateX(-10%) translateY(0); }
+  .logo-container img:last-child { max-height: 50px; transform: translateX(-20%) translateY(-25px); }
+  .logo-container.loaded img:last-child { transform: translateX(-20%) translateY(-5px); }
+  .logo-container img:hover { transform: scale(1.05); }
+
+  header { text-align: center; padding: 15px 10px; background: transparent; }
+  .title-block { text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+  header h1 { font-size: 2em; margin: 0; }
+  header h2 { font-size: 1.3em; margin: 0; font-weight: normal; }
+
+  .calendar-buttons, .team-buttons { display: flex; justify-content: center; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
+  .calendar-buttons button, .team-buttons button {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 30px;
+    padding: 8px 18px;
+    font-size: 0.95em;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
   }
-  td:last-child{border-bottom:none;}
-  td::before{content:attr(data-label); font-weight:600; color:#444;}
-}
+  .calendar-buttons button:hover, .team-buttons button:hover { background: #d42323; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.35); }
+  .calendar-buttons button.active, .team-buttons button.active {
+    background: #fff;
+    color: #d42323;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.45);
+  }
+
+  .calendar-container { 
+    width: 90%;          
+    max-width: 1600px;   
+    height: 900px;        
+    background: rgba(255,255,255,0.06); 
+    border-radius: 30px; 
+    overflow: hidden; 
+    box-shadow: 0 25px 70px rgba(0,0,0,0.75); 
+    border: 1px solid rgba(255,255,255,0.2); 
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; 
+  }
+  .calendar-container::before {
+    content: "";
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    width: 450px;
+    height: 450px;
+    background: url("HCI.gif") no-repeat center;
+    background-size: contain;
+    opacity: 0.15;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .calendar-container iframe { 
+    width: 100%; 
+    height: 100%; 
+    border: 0; 
+    background: transparent; 
+    opacity: 1; 
+    transition: opacity 0.5s ease; 
+    position: relative; 
+    z-index: 1;
+  }
+
+  .link-container { display: flex; justify-content: center; gap: 30px; margin: 30px 0 50px; font-size: 1.1em; flex-wrap: wrap; }
+  .link-container a { text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: bold; color: #fff; transition: transform 0.3s ease, color 0.3s ease; }
+  .link-container a span { font-size: 1.5em; transition: transform 0.3s ease; }
+  .link-container a:hover { transform: scale(1.1); color: #003789; }
+  .link-container a:hover span { transform: scale(1.3) rotate(-10deg); }
+
+  .signature { position: fixed; bottom: 10px; right: 15px; font-size: 0.9em; color: rgba(255,255,255,0.5); font-weight: normal; font-family: "Areno Serif", serif; pointer-events: none; }
+
+  @media (max-width: 768px) { 
+    .calendar-container { width: 95%; height: 750px; }
+    .calendar-container::before { width: 350px; height: 350px; }
+    .logo-container img:first-child { max-height: 70px; } 
+    .logo-container img:last-child { max-height: 35px; } 
+  }
 </style>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
+<div class="logo-container">
+  <img src="HAI.png" alt="HAI Logo">
+  <img src="TIWAG.jpg" alt="TIWAG Logo">
+</div>
+
 <header>
-  <h1>U15-Tabelle – HC Innsbruck</h1>
-  <img id="logo" src="HAI.webp" alt="HC Innsbruck Logo">
+  <div class="title-block">
+    <h1>HC TIWAG Innsbruck</h1>
+    <h2>Eisplan 2025/26</h2>
+  </div>
 </header>
 
-<table>
-  <thead>
-    <tr>
-      <th>Rang</th>
-      <th>Team</th>
-      <th>Spiele</th>
-      <th>Siege</th>
-      <th>Siege OT</th>
-      <th>Unentschieden</th>
-      <th>Niederlagen OT</th>
-      <th>Niederlagen</th>
-      <th>Tore</th>
-      <th>Gegentore</th>
-      <th>Tordifferenz</th>
-      <th>Punkte</th>
-    </tr>
-  </thead>
-  <tbody id="tabelle"></tbody>
-</table>
+<div class="calendar-buttons">
+  <button onclick="setCalendarView('AGENDA')" id="view-AGENDA">Terminansicht</button>
+  <button onclick="setCalendarView('WEEK')" id="view-WEEK">Woche</button>
+  <button onclick="setCalendarView('MONTH')" id="view-MONTH">Monat</button>
+</div>
 
-<p id="letzteAktualisierung"></p>
+<div class="team-buttons">
+  <button onclick="setCalendarTeam('u7lauf')" id="team-u7lauf">U7/Lauf - ICE</button>
+  <button onclick="setCalendarTeam('u7')" id="team-u7">U7</button>
+  <button onclick="setCalendarTeam('u9')" id="team-u9">U9</button>
+  <button onclick="setCalendarTeam('u11')" id="team-u11">U11</button>
+  <button onclick="setCalendarTeam('u13')" id="team-u13">U13</button>
+  <button onclick="setCalendarTeam('u15')" id="team-u15">U15</button>
+  <button onclick="setCalendarTeam('u17')" id="team-u17">U17</button>
+  <button onclick="setCalendarTeam('u20')" id="team-u20">U20</button>
+  <button onclick="setCalendarTeam('ice')" id="team-ice">ICE</button>
+
+  <!-- Neue Buttons -->
+  <button onclick="setCalendarTeam('goalies_u9_u13')" id="team-goalies_u9_u13">Goalies U9/U11/U13</button>
+  <button onclick="setCalendarTeam('goalies_u15_u20')" id="team-goalies_u15_u20">Goalies U15/U17/U20</button>
+  <button onclick="setCalendarTeam('skills_prospect')" id="team-skills_prospect">Skills/Prospect</button>
+</div>
+
+<div class="calendar-container">
+
+  <!-- ERSETZTER IFRAME -->
+  <iframe id="calendarFrame" src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FVienna&showTitle=0&showTz=0&mode=WEEK&src=NWFlMmY4NGNkZmM5ZDAyMTQ2ZjY2NmE5NGVjMzE3YjY0MmMxMmY4YzhiNGUxMjNhYWM4NmZmYWY5YzQwNjM2ZEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NmI2MDYwYjM5MTliZjkxNDAyZGJjODc0NmZjYTc3YjM2YTM1MTI5YjUyZmI3MmUxYzhkYjhkYjE0MmJmMmM5NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=YzBlMTk1MjI4ZWNlNGFiNjJiZTcyMWU1MzcyMjY2MzZjYmVlMGEyZTMyOGE5ZWM1ZGQzYmU3MTliNmZmNzQxMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y2UxOTFkNzBiNDBhNDljMDZhZWVlN2IwNzhhYjQwYjEyOGY1ZGMyNjA3OTZlYjkzYzI3MTU0OTU4YWZiMjI4ZEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=YzIwOThkMzI5MDA2MmI4ZDAxZjMxOTU0NDQ5OGY3YmQzNDVjNWQzZWRmOTA5NDJjOGQxNDM4YjVmZWUxYzVjMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NzFjYTI5MjEzNGEwZjg1NzI1NGJlM2RkMTM3N2NhZjc5OGYyNDg1OTU4OWE2MGMzNmI0NWJiNjcyN2VjZjljMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZDU3OWRjY2M2MTNhZTI0YzZlNjY1NmE5ZGIyOWM0MDRlNDk5NjNhZjFiZDYyNjY0NGQwZGE5OTVhNTUzNmUxOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NzBiZDg4YjUxNmVlNGRmNGFjMmZkMWU2NGJhOWQ4MzBlMjViY2VlZjc4YjM4MmM5N2FhZWZmZWU1NmY5NjlmMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=YjQ5M2RhNTY5NDg5NTA2MDQ0YWE2MmVmYTA5ODIyODM0MmQ0NjRhMzQ4MzY5MGYyNTU1NTE0Yzg0Y2ZmNDI0NEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=YWQ4ZjNlMmRiODQ1YjZiNmM5ZTZkYmIyZDkyNGY1NTliNjVhNjI3YTNlNWEzMmYwYzQ0YmRhZTA1NzMxNGMwOUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=MmQ1YTQ3MzVhMjBkY2EyYTViYmFjZTc2NmQyNGY2ODA1MjJiZWQ1ZDQxNzg1MmFlNjMwYThmMzBhMzYxODU2OUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%233d0af6&color=%23f4511e&color=%237986cb&color=%23c0ca33&color=%230b8043&color=%233f51b5&color=%238e24aa&color=%23616161&color=%23ad1457&color=%23e4c441&color=%2342b3a8"></iframe>
+
+</div>
+
+<div class="link-container">
+  <a href="https://www.hcinnsbruck.at" target="_blank"><span>🌐</span> www.hcinnsbruck.at</a>
+  <a href="https://www.instagram.com/hcijuniors/?hl=de" target="_blank"><span>📱</span> Instagram</a>
+  <a href="https://www.facebook.com/hcijuniors/?locale=de_DE" target="_blank"><span>📘</span> Facebook</a>
+  <a href="https://www.pictrs.com/hci" target="_blank"><span>📷</span> Foto Shop</a>
+</div>
+
+<div class="signature">MS</div>
 
 <script>
-const manualUpdate = true;
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('.logo-container').classList.add('loaded');
+  setCalendarTeam('u7lauf'); 
+  setCalendarView('WEEK');   
+});
 
-const backupData = {
-  "data": {
-    "rows": [
-      {"tableRank":1,"teamLongname":"EC KAC","gamesPlayed":8,"gamesWon":8,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":0,"goalsFor":67,"goalsAgainst":17,"goalDifference":"+50","points":24},
-      {"tableRank":2,"teamLongname":"\"Rockit-Apfel\" Graz99 Juniors","gamesPlayed":9,"gamesWon":8,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":1,"goalsFor":58,"goalsAgainst":20,"goalDifference":"+38","points":24},
-      {"tableRank":3,"teamLongname":"EK Zeller Eisbären","gamesPlayed":9,"gamesWon":6,"gamesWonInOt":1,"gamesTied":0,"gamesLostInOt":0,"gamesLost":2,"goalsFor":67,"goalsAgainst":40,"goalDifference":"+27","points":20},
-      {"tableRank":4,"teamLongname":"Steel Wings Linz","gamesPlayed":8,"gamesWon":5,"gamesWonInOt":1,"gamesTied":0,"gamesLostInOt":0,"gamesLost":2,"goalsFor":67,"goalsAgainst":21,"goalDifference":"+46","points":17},
-      {"tableRank":5,"teamLongname":"EC Red Bull Salzburg","gamesPlayed":9,"gamesWon":5,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":1,"gamesLost":3,"goalsFor":62,"goalsAgainst":45,"goalDifference":"+17","points":16},
-      {"tableRank":6,"teamLongname":"HC TIWAG Innsbruck - Die Haie","gamesPlayed":10,"gamesWon":4,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":1,"gamesLost":5,"goalsFor":55,"goalsAgainst":40,"goalDifference":"+15","points":13},
-      {"tableRank":7,"teamLongname":"EC iDM VSV","gamesPlayed":9,"gamesWon":4,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":5,"goalsFor":56,"goalsAgainst":51,"goalDifference":"+5","points":12},
-      {"tableRank":8,"teamLongname":"EC Lower Austria Stars","gamesPlayed":8,"gamesWon":3,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":5,"goalsFor":55,"goalsAgainst":39,"goalDifference":"+16","points":9},
-      {"tableRank":9,"teamLongname":"EAC Junior Capitals","gamesPlayed":9,"gamesWon":2,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":7,"goalsFor":43,"goalsAgainst":53,"goalDifference":"-10","points":6},
-      {"tableRank":10,"teamLongname":"KSV Eishockey - Juniors / Graz99 Juniors","gamesPlayed":8,"gamesWon":1,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":7,"goalsFor":22,"goalsAgainst":60,"goalDifference":"-38","points":3},
-      {"tableRank":11,"teamLongname":"EV Zeltweg - Murtal Lions","gamesPlayed":9,"gamesWon":0,"gamesWonInOt":0,"gamesTied":0,"gamesLostInOt":0,"gamesLost":9,"goalsFor":8,"goalsAgainst":174,"goalDifference":"-166","points":0}
-    ]
-  }
+const calendars = {...calendars...
+
+  /* === Neue Kalender für neue Buttons === */
+  goalies_u9_u13: "https://calendar.google.com/calendar/embed?src=DEIN_LINK_GOALIES_U9_U13",
+  goalies_u15_u20: "https://calendar.google.com/calendar/embed?src=DEIN_LINK_GOALIES_U15_U20",
+  skills_prospect: "https://calendar.google.com/calendar/embed?src=DEIN_LINK_SKILLS_PROSPECT"
 };
 
-function renderTabelle(data) {
-  const tbody = $("#tabelle");
-  tbody.empty();
+let currentCalendar = "";
+let currentView = "WEEK";
 
-  data.data.rows.forEach(team => {
-    const teamKlasse = team.teamLongname === "HC TIWAG Innsbruck - Die Haie" ? "team-rot" : "";
-    tbody.append(`
-      <tr>
-        <td data-label="Rang">${team.tableRank}</td>
-        <td data-label="Team" class="${teamKlasse}">${team.teamLongname}</td>
-        <td data-label="Spiele">${team.gamesPlayed}</td>
-        <td data-label="Siege">${team.gamesWon}</td>
-        <td data-label="Siege OT">${team.gamesWonInOt}</td>
-        <td data-label="Unentschieden">${team.gamesTied}</td>
-        <td data-label="Niederlagen OT">${team.gamesLostInOt}</td>
-        <td data-label="Niederlagen">${team.gamesLost}</td>
-        <td data-label="Tore">${team.goalsFor}</td>
-        <td data-label="Gegentore">${team.goalsAgainst}</td>
-        <td data-label="Tordifferenz">${team.goalDifference}</td>
-        <td data-label="Punkte" class="punkte">${team.points}</td>
-      </tr>
-    `);
-  });
-
-  updateZeitstempel();
+function setCalendarTeam(team) {
+  currentCalendar = calendars[team];
+  fadeUpdateIframe();
+  highlightButtonOnly('team-buttons', 'team-' + team);
 }
 
-function updateZeitstempel() {
-  const jetzt = new Date();
-  $("#letzteAktualisierung").text(`Letzte Aktualisierung: ${jetzt.toLocaleDateString()} ${jetzt.toLocaleTimeString()}`);
+function setCalendarView(view) {
+  currentView = view;
+  fadeUpdateIframe();
+  highlightButtonOnly('calendar-buttons', 'view-' + view);
 }
 
-function fetchDaten() {
-  const url = "https://api.hockeydata.net/data/ebel/Standings?apiKey=738aba5a0c15ea7da496e1cda6922ff1&lang=en&referer=www.hcinnsbruck.at&divisionId=oehv-u15-gd&callback=?";
-  $.getJSON(url, function(data){
-    renderTabelle(data);
-  }).fail(function(){
-    renderTabelle(backupData);
-  });
+function fadeUpdateIframe() {
+  const frame = document.getElementById('calendarFrame');
+  if (!currentCalendar) return;
+  frame.style.opacity = 0;
+  setTimeout(() => {
+    const url = currentCalendar.includes("mode=") ? currentCalendar.replace(/mode=[^&]*/, "mode=" + currentView) : currentCalendar + "&mode=" + currentView;
+    frame.src = url;
+    frame.onload = () => frame.style.opacity = 1;
+  }, 300);
 }
 
-// Init
-renderTabelle(backupData);
-if(manualUpdate) setInterval(fetchDaten,60000);
-fetchDaten();
+function highlightButtonOnly(containerClass, buttonId) {
+  document.querySelectorAll('.' + containerClass + ' button').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById(buttonId);
+  if(activeBtn) activeBtn.classList.add('active');
+}
 </script>
-
 </body>
 </html>
